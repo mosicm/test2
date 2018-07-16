@@ -1,0 +1,133 @@
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="main" style="border-bottom: 1px solid black;top: 100px;left: 0px;position: relative;height:50px">
+			
+	</div>
+	
+
+	<script type="text/javascript">
+
+		var pos1 = 400;
+		var pos2 = 820;
+		var distance = pos2 - pos1;
+
+		function Robot(name,pos){
+			this.name = name;
+			this.position = pos;
+			this.instructions = [];
+			this.addInstruction = function(inst){
+				this.instructions.push(inst);
+			}
+			this.draw = function(){
+				var div = document.createElement("div");
+				div.style.cssText = "border: 1px solid red;width:28px;height:50px;position:absolute;top:0px;left:"+this.position+"px;";
+				div.setAttribute("id", this.name);
+				div.innerHTML = this.name;
+				var spot = document.createElement("div");
+				spot.style.cssText = "width:5px;height:5px;background-color:black;position:absolute;top:45px;left:"+this.position+"px";
+				document.getElementById('main').appendChild(div);
+				document.getElementById('main').appendChild(spot);				
+			}
+			this.skip = function(){
+
+			}
+
+		}
+
+		
+		function rightR1(){
+			robot1.style.left = (parseInt(robot1.style.left) + 50) + "px";
+		}
+		function leftR1(){
+			robot1.style.left = (parseInt(robot1.style.left) - 50) + "px";
+		}
+
+
+		function rightR2(){
+			robot2.style.left = (parseInt(robot2.style.left) + 50) + "px";
+		}
+		function leftR2(){
+			robot2.style.left = (parseInt(robot2.style.left) - 50) + "px";
+		}
+
+		var r1 = new Robot("R1", pos1);
+		r1.draw();
+		var robot1 = document.getElementById(r1.name);
+		r1.addInstruction(rightR1);
+		r1.addInstruction(leftR1);
+		r1.addInstruction(leftR1);
+		r1.addInstruction(leftR1);
+		r1.addInstruction(rightR1);
+		r1.addInstruction(rightR1);
+		r1.addInstruction(rightR1);
+		r1.addInstruction(rightR1);
+
+		
+
+		var r2 = new Robot("R2", pos2);
+		r2.draw();
+		var robot2 = document.getElementById(r2.name);
+		r2.addInstruction(leftR2);
+		r2.addInstruction(rightR2);
+		r2.addInstruction(rightR2);
+		r2.addInstruction(leftR2);
+		r2.addInstruction(leftR2);
+		r2.addInstruction(leftR2);
+		r2.addInstruction(leftR2);
+		r2.addInstruction(leftR2);
+
+
+		var i=0;
+		function moveR1(){
+			if(i>=r1.instructions.length){
+				return;
+			}
+			if((parseInt(robot1.style.left)==pos1)&&(r1.instructions[i].name=="leftR1")){
+				i++;
+			}
+
+			r1.instructions[i++]();
+
+			setTimeout('moveR1()', 1000);
+		}
+
+		var j = 0;
+		function moveR2(){
+			if(j>=r2.instructions.length){
+				return;
+			}
+			if((parseInt(robot2.style.left)==pos2)&&(r2.instructions[j].name=="rightR2")) {
+				j++;
+			}
+			r2.instructions[j++]();
+
+			setTimeout('moveR2()', 1000);
+		}
+	
+		setTimeout(function(){
+			moveR1();
+			moveR2();
+		}, 2000);
+
+
+		function collision(){
+			var r1_distance = parseInt(robot1.style.left) + parseInt(robot1.style.width) - pos1;
+			var r2_distance = pos2 - parseInt(robot2.style.left);
+			
+			if((r1_distance + r2_distance) >= distance){
+				alert('collision');
+				return;
+			}
+		}
+
+		setInterval('collision()', 500);
+
+
+
+	</script>
+</body>
+</html>

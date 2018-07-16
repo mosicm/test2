@@ -1,0 +1,123 @@
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="main" style="border-bottom: 1px solid black;top: 100px;left: 0px;position: relative;height:50px">
+			
+	</div>
+	
+
+	<script type="text/javascript">
+		
+		// Pocetne pozicije robota
+		var pos1 = 400;
+		var pos2 = 820;
+		// Rastojanje izmedju robota;
+		var distance = pos2 - pos1;
+		
+		function Robot(name,pos){
+			this.name = name;
+			this.position = pos;
+			var me = this;
+			var i = 0;
+			
+			// U ovom nizu se nalaze instrukcije za kretanje robota
+			this.instructions = [];
+
+			// Ova metoda omogucava dodavanje novih instrukcija
+			this.addInstruction = function(inst){
+				this.instructions.push(inst);
+			}
+			
+			// Ova metoda iscrtava robota i pocetnu tacku
+			this.draw = function(){
+				div = document.createElement("div");
+				div.style.cssText = "border: 1px solid red;width:28px;height:50px;position:absolute;top:0px;left:"+this.position+"px;";
+				div.setAttribute("id", this.name);
+				div.innerHTML = this.name;
+				var spot = document.createElement("div");
+				spot.style.cssText = "width:5px;height:5px;background-color:black;position:absolute;top:45px;left:"+this.position+"px";
+				document.getElementById('main').appendChild(div);
+				document.getElementById('main').appendChild(spot);				
+			}
+
+			// Pomeranje robota 50px u desno
+			this.right = function(){
+				var div = document.getElementById(me.name);
+				div.style.left = (parseInt(div.style.left) + 50) + "px";
+			}
+
+			// Pomeranje robota 50px u levo
+			this.left = function(){
+				var div = document.getElementById(me.name);
+				div.style.left = (parseInt(div.style.left) - 50) + "px";
+			}
+
+			this.skip = function(){
+
+			}
+
+			// Metoda koja kontrolise kretanje robota prolaskom kroz unapred definisan niz instrukcija, nakon svakog poziva instrukcije promenljiva i se povecava za jedan i ponovo se poziva metoda move kroz setTimeout funkciju sve do ispunjenja uslova
+			this.move = function(){
+				if(i>=this.instructions.length){
+					return;
+				}
+
+				this.instructions[i]();
+				i++;
+
+				setTimeout(function(){
+					me.move();
+				}, 1000);
+			}
+		}
+
+
+		var r1 = new Robot("R1", pos1);
+		r1.draw();
+		r1.addInstruction(r1.right);
+		r1.addInstruction(r1.right);
+		r1.addInstruction(r1.right);
+		r1.addInstruction(r1.left);
+		r1.addInstruction(r1.right);
+		r1.addInstruction(r1.right);
+		
+
+		var r2 = new Robot("R2", pos2);
+		r2.draw();
+		r2.addInstruction(r2.left);
+		r2.addInstruction(r2.left);
+		r2.addInstruction(r2.left);
+		r2.addInstruction(r2.left);
+		r2.addInstruction(r2.right);
+		r2.addInstruction(r2.left);
+
+	
+		// Start kretanja oba robota
+		setTimeout(function(){
+			r1.move();
+			r2.move();
+		}, 1000);
+
+		// Provera trenutnog polozaja robota na svakih 500ms kako bi se registrovao evenutualni sudar
+		function collision(){
+			var robot1 = document.getElementById(r1.name);
+			var robot2 = document.getElementById(r2.name);
+			var r1_distance = parseInt(robot1.style.left) + parseInt(robot1.style.width) - pos1;
+			var r2_distance = pos2 - parseInt(robot2.style.left);
+			
+			if((r1_distance + r2_distance) >= distance){
+				alert('Collision');
+				return;
+			}
+		}
+		setInterval('collision()', 500);
+
+
+
+	</script>
+
+</body>
+</html>
